@@ -34,6 +34,7 @@ local.properties
 node_modules/
 npm-debug.log
 yarn-error.log
+**/*/res/values/secrets.xml
 
 # BUCK
 buck-out/
