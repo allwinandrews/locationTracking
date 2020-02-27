@@ -18,7 +18,7 @@ export default function App() {
   });
 
   useEffect(() => {
-    Geolocation.getCurrentPosition(
+    Geolocation.watchPosition(
       position => {
         console.log(position);
         const data = {
