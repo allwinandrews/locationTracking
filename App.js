@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View, Text, PermissionsAndroid} from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 
@@ -17,38 +17,59 @@ export default function App() {
     longitudeDelta: 0.009,
   });
 
+  async function requestLocationPermission() {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Location Permission',
+          message:
+            'This App needs access to your location ' +
+            'so we can know where you are.',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use locations ');
+        Geolocation.watchPosition(
+          position => {
+            console.log(position);
+            const data = {
+              ...state,
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              error: null,
+            };
+            setState(data);
+          },
+          error => {
+            console.log(error);
+            const data = {
+              ...state,
+              error: error.message,
+            };
+            setState(data);
+          },
+          {
+            enableHighAccuracy: false,
+            timeout: 5000,
+            maximumAge: 1000,
+            distanceFilter: 0,
+          },
+        );
+      } else {
+        console.log('Location permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
   useEffect(() => {
-    Geolocation.watchPosition(
-      position => {
-        console.log(position);
-        const data = {
-          ...state,
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          error: null,
-        };
-        setState(data);
-      },
-      error => {
-        console.log(error);
-        const data = {
-          ...state,
-          error: error.message,
-        };
-        setState(data);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 1000,
-        distanceFilter: 10,
-      },
-    );
+    requestLocationPermission();
   }, []);
 
   return (
     <View style={styles.container}>
-      <Text>kkkkk</Text>
       <MapView
         style={styles.map}
         provider={PROVIDER_GOOGLE}

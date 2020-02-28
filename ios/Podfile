@@ -40,6 +40,8 @@ target 'locationTracking' do
   pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
 
 
+  pod 'RNFirebase', :path => '../node_modules/react-native-firebase'
+
   target 'locationTrackingTests' do
     inherit! :search_paths
     # Pods for testing
